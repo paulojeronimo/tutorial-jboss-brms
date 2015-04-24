@@ -1,0 +1,102 @@
+= Tutorial de JBoss BRMS
+:author: Paulo Jerônimo
+:toc:
+
+== Resumo
+
+Este tutorial guia a montagem de uma máquina virtual (VM) (com o Fedora 21) executada no http://virtualbox.org[VirtualBox] e gerenciada pelo http://vagrantup.com[Vagrant] para demonstrar a execução do exemplo https://github.com/jbossdemocentral/brms-coolstore-demo[brms-coolstore-demo], de autoria de http://www.schabell.org/[Eric Schabell].
+
+== Procedimentos
+
+=== Instalando a VM
+
+Clone esse projeto do GitHub utilizando o Git:
+
+[source,bash]
+----
+git clone http://github.com/paulojeronimo/tutorial-jboss-brms
+----
+
+Vá para o diretório tutorial-jboss-brms. Em seguida, copie o arquivo `config.exemplo` nomeando-o `config`. Esse arquivo contém a localização de repositórios utilizados por esse projeto e que podem ser configurados, caso você esteja utilizando forks em tua própria conta no http://github.com[GitHub]. Estes são os comandos:
+
+[source,bash]
+----
+cd tutorial-jboss-brms
+cp config.exemplo config
+----
+
+Se você ainda não tem o Vagrant instalado, instale-o. Em seguida, instale também o plugin vagrant-vbguest utilizando o seguinte comando:
+
+[source,bash]
+----
+vagrant plugin install vagrant-vbguest
+----
+
+Inicie e provisione a máquina virtual com os comandos a seguir:
+
+[source,bash]
+----
+vagrant up
+vagrant ssh -c /vagrant/instalar
+vagrant vbguest --do install
+vagrant reload
+----
+
+Crie o diretório `tutorial-jboss-brms.backups` um nível acima do diretório desse tutorial:
+
+[source,bash]
+----
+mkdir ../tutorial-jboss-brms.backups
+----
+
+Baixe os instaladores do http://www.jboss.org/download-manager/file/jboss-eap-6.4.0.GA-installer.jar[JBoss EAP 6.4] e do http://www.jboss.org/download-manager/file/jboss-brms-6.1.0.GA-installer.jar[JBoss BRMS 6.0.1]. Mova-os para o diretório `../tutorial-jboss-brms.backups`
+
+Baixe também o https://github.com/jbossdemocentral/brms-coolstore-demo/archive/master.zip[zip da aplicação brms-coolstore-demo] e mova-a para esse diretório.
+
+Execute os comandos a seguir para instalar o JBoss, o BRMS e a aplicação:
+
+[source,bash]
+----
+vagrant ssh
+unzip /backup/master.zip
+cd ~/brms-coolstore-demo-master/
+cp /backup/jboss-*.jar installs/
+./init.sh
+./target/jboss-eap-6.4/bin/standalone.sh -b 0.0.0.0 &
+----
+
+A URL http://localhost:8080/business-central pode ser acessada através do usuário `erics` e da senha `jbossbrms1!`.
+
+A aplicação pode ser acessada através da URL http://localhost:8080/brms-coolstore-demo.
+
+=== Parando e reiniciando o servidor da aplicação
+
+Se a VM estiver parada, inicie-a:
+
+[source,bash]
+----
+vagrant up
+----
+
+Abra um shell na VM e vá diretório `brms-coolstore-demo-master`:
+
+[source,bash]
+----
+vagrant ssh
+cd ~/brms-coolstore-demo-master/
+----
+
+Para parar o JBoss, execute:
+
+[source,bash]
+----
+./target/jboss-eap-6.4/bin/jboss-cli.sh -c :shutdown
+----
+
+Para reiniciar o servidor novamente, execute:
+
+[source,bash]
+----
+./target/jboss-eap-6.4/bin/standalone.sh -b 0.0.0.0 &
+----
+

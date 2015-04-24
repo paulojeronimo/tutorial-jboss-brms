@@ -1,0 +1,48 @@
+#!/bin/bash
+# Author: Paulo Jeronimo (email: paulojeronimo@gmail.com, twitter: @paulojeronimo)
+set +x
+
+BASEDIR=/vagrant
+source "$BASEDIR"/config || exit 1
+source "$BASEDIR"/defaults || exit 1
+
+if $USA_PROXY
+then
+    cat <<_EOF | sudo tee /etc/fedyrc
+export http_proxy=$http_proxy
+export https_proxy=$http_proxy
+export all_proxy=$http_proxy
+_EOF
+fi
+
+sudo sed -i 's/\(keepcache=\).*/\11/' /etc/yum.conf
+
+"$BASEDIR"/restaurar
+
+sudo -i -u $AMBIENTE_USER bash <<EOF
+executar_e_inserir_no_bashrc() {
+    local cmd="\$@"
+    eval \$cmd; echo \$cmd >> ~/.bashrc
+}
+
+if $USA_PROXY
+then
+    f="$BASEDIR"/.proxy
+    sudo cp "\$f" ~/
+    sudo chown $AMBIENTE_USER: ~/.proxy
+    executar_e_inserir_no_bashrc "source ~/.proxy"
+fi
+
+sudo yum -y update
+sudo yum -y install rsync tar unzip wget git tree dos2unix lsof redhat-lsb-core vim patch maven
+
+git clone $GITHUB_DOTFILES
+${GITHUB_DOTFILES##*/}/install
+
+git config --global user.name '$GITHUB_NAME'
+git config --global user.email $GITHUB_EMAIL
+
+sudo shutdown -r now
+EOF
+
+# vim: set ts=4 sw=4 expandtab:

@@ -1,0 +1,16 @@
+#!/bin/bash
+# Author: Paulo Jeronimo (email: paulojeronimo@gmail.com, twitter: @paulojeronimo)
+set +x
+
+BASEDIR=/vagrant
+source "$BASEDIR"/config || exit 1
+source "$BASEDIR"/defaults || exit 1
+
+for d in ${AMBIENTE_USER_DIRS[*]}
+do 
+    mkdir -p "/$BACKUP_DIR/$d"
+    [ -L $d ] || ln -s "/$BACKUP_DIR/$d" ~/$d
+done
+f="/$BACKUP_DIR/$VAGRANT_BACKUP_TAR"; [ -f "$f" ] && sudo tar xvfP "$f"
+
+# vim: set ts=4 sw=4 expandtab:

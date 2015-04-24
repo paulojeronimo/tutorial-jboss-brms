@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# diretório em que será clonado o projeto $GITHUB_DOTFILES
+DOTFILES_DIR=${GITHUB_DOTFILES##*/}
+
+# usuário do ambiente
+AMBIENTE_USER=${AMBIENTE_USER:-vagrant}
+
+# quando o ambiente está sendo executando no Vagrant estes 
+#   são os diretórios que ficarão no HOST (e não na BOX):
+AMBIENTE_USER_DIRS=(
+.m2
+.forge
+projetos
+)
+
+# nome do arquivo de backup utilizado pelo Vagrant
+#   quando são chamados os scripts salvar e restaurar:
+VAGRANT_BACKUP_TAR=fedora.backup.tar
+
+# diretório de backup (utilizado pelos scripts salvar e restaurar)
+case $USER in
+    vagrant) BACKUP_DIR=backup;;
+    *) BACKUP_DIR=`basename "$BASEDIR.backup"`;;
+esac
