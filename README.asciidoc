@@ -122,6 +122,13 @@ vagrant halt
 vagrant package
 ----
 
+Remova a VM pois, no próximo passo, utilizaremos a box gerada:
+
+[source,bash]
+----
+vagrant destroy
+----
+
 === Utilizando a box gerada
 
 Adicione a box gerada a lista de boxes conhecidas pelo Vagrant:
