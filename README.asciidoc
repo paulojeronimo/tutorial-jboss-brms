@@ -4,20 +4,20 @@
 
 == Resumo
 
-Este tutorial guia a montagem de uma máquina virtual (VM) (com o Fedora 21) executada no http://virtualbox.org[VirtualBox] e gerenciada pelo http://vagrantup.com[Vagrant] para demonstrar a execução do exemplo https://github.com/jbossdemocentral/brms-coolstore-demo[brms-coolstore-demo], de autoria de http://www.schabell.org/[Eric Schabell].
+Este tutorial guia a montagem de uma `virtual machine` (VM) (com o Fedora 21) executada no http://virtualbox.org[VirtualBox] e gerenciada pelo http://vagrantup.com[Vagrant] para demonstrar a execução do exemplo https://github.com/jbossdemocentral/brms-coolstore-demo[brms-coolstore-demo], de autoria de http://www.schabell.org/[Eric Schabell].
 
 == Procedimentos
 
 === Instalando a VM
 
-Clone esse projeto do GitHub utilizando o Git:
+Clone este projeto do GitHub utilizando o Git:
 
 [source,bash]
 ----
 git clone http://github.com/paulojeronimo/tutorial-jboss-brms
 ----
 
-Vá para o diretório tutorial-jboss-brms. Em seguida, copie o arquivo `config.exemplo` nomeando-o `config`. Esse arquivo contém a localização de repositórios utilizados por esse projeto e que podem ser configurados, caso você esteja utilizando forks em tua própria conta no http://github.com[GitHub]. Estes são os comandos:
+Vá para o diretório tutorial-jboss-brms. Em seguida, copie o arquivo `config.exemplo` nomeando-o `config`. Esse arquivo contém a localização de repositórios utilizados por este projeto e que podem ser configurados, caso você esteja utilizando forks em tua própria conta no http://github.com[GitHub]. Em resumo, execute os seguintes comandos:
 
 [source,bash]
 ----
@@ -25,12 +25,21 @@ cd tutorial-jboss-brms
 cp config.exemplo config
 ----
 
-Se você ainda não tem o Vagrant instalado, instale-o. Em seguida, instale também o plugin vagrant-vbguest utilizando o seguinte comando:
+Se você ainda não tem VirtualBox e o Vagrant instalados, instale-os (nessa ordem). Em seguida, instale também o plugin vagrant-vbguest utilizando o seguinte comando:
 
 [source,bash]
 ----
 vagrant plugin install vagrant-vbguest
 ----
+
+Crie o diretório `tutorial-jboss-brms.backup` um nível acima do diretório deste tutorial:
+
+[source,bash]
+----
+mkdir ../tutorial-jboss-brms.backup
+----
+
+Baixe os instaladores do http://www.jboss.org/download-manager/file/jboss-eap-6.4.0.GA-installer.jar[JBoss EAP 6.4] e do http://www.jboss.org/download-manager/file/jboss-brms-6.1.0.GA-installer.jar[JBoss BRMS 6.0.1]. Mova-os para o diretório `../tutorial-jboss-brms.backup` Baixe também o https://github.com/jbossdemocentral/brms-coolstore-demo/archive/master.zip[zip da aplicação brms-coolstore-demo] e mova-a para esse diretório.
 
 Inicie e provisione a máquina virtual com os comandos a seguir:
 
@@ -38,65 +47,102 @@ Inicie e provisione a máquina virtual com os comandos a seguir:
 ----
 vagrant up
 vagrant ssh -c /vagrant/instalar
-vagrant vbguest --do install
-vagrant reload
 ----
 
-Crie o diretório `tutorial-jboss-brms.backups` um nível acima do diretório desse tutorial:
+O script link:./instalar[instalar] executará todos os passos de instalação da VM, do JBoss BRMS e da aplicação até o ponto de torná-la disponível para execução. Esse será um procedimento bastante demorado. Você pode sair para tomar um café enquanto o provisionamento ocorre ;).
 
-[source,bash]
-----
-mkdir ../tutorial-jboss-brms.backups
-----
-
-Baixe os instaladores do http://www.jboss.org/download-manager/file/jboss-eap-6.4.0.GA-installer.jar[JBoss EAP 6.4] e do http://www.jboss.org/download-manager/file/jboss-brms-6.1.0.GA-installer.jar[JBoss BRMS 6.0.1]. Mova-os para o diretório `../tutorial-jboss-brms.backups`
-
-Baixe também o https://github.com/jbossdemocentral/brms-coolstore-demo/archive/master.zip[zip da aplicação brms-coolstore-demo] e mova-a para esse diretório.
-
-Execute os comandos a seguir para instalar o JBoss, o BRMS e a aplicação:
-
-[source,bash]
-----
-vagrant ssh
-unzip /backup/master.zip
-cd ~/brms-coolstore-demo-master/
-cp /backup/jboss-*.jar installs/
-./init.sh
-./target/jboss-eap-6.4/bin/standalone.sh -b 0.0.0.0 &
-----
-
-A URL http://localhost:8080/business-central pode ser acessada através do usuário `erics` e da senha `jbossbrms1!`.
-
-A aplicação pode ser acessada através da URL http://localhost:8080/brms-coolstore-demo.
-
-=== Parando e reiniciando o servidor da aplicação
-
-Se a VM estiver parada, inicie-a:
+Terminado o provisionamento, o script `instalar` desligará a máquina automaticamente. Reinicie-a e faça a atualização do `VirtualBox Guest Additions` através dos seguintes comandos:
 
 [source,bash]
 ----
 vagrant up
+vagrant vbguest --do install
+vagrant reload
 ----
 
-Abra um shell na VM e vá diretório `brms-coolstore-demo-master`:
+=== Parando e reiniciando a aplicação
+
+Se a VM estiver parada inicie-a e, em seguida, abra um shell via ssh com os seguintes comandos:
+
+[source,bash]
+----
+vagrant up
+vagrant ssh
+----
+
+Para executar o JBoss e ter a aplicação disponível para acesso, comande:
+
+[source,bash]
+----
+/vagrant/brms start
+----
+
+Você pode ter acesso ao log de execução do JBoss através do seguinte comando:
+
+[source,bash]
+----
+/vagrant/brms log &
+----
+
+Se desejar encerrar a execução do JBoss (e da aplicação), execute:
+
+[source,bash]
+----
+/vagrant/brms stop
+----
+
+Você pode ter a informação sobre se o JBoss está sendo executado, a qualquer momento, com o seguinte comando:
+
+[source,bash]
+----
+/vagrant/brms status
+----
+
+=== Acessando a aplicação
+
+Com o JBoss em execução, a aplicação pode ser acessada através da URL http://localhost:8080/brms-coolstore-demo. Além disso, a URL http://localhost:8080/business-central pode ser acessada através do usuário `erics` e da senha `jbossbrms1!`.
+
+=== Gerando uma box
+
+Acesse a VM, salve e limpe o cache de pacotes (para diminuir o tamanho da box que será gerada):
 
 [source,bash]
 ----
 vagrant ssh
-cd ~/brms-coolstore-demo-master/
+/vagrant/salvar
+sudo yum -y clean all
 ----
 
-Para parar o JBoss, execute:
-
-[source,bash]
-----
-./target/jboss-eap-6.4/bin/jboss-cli.sh -c :shutdown
-----
-
-Para reiniciar o servidor novamente, execute:
+Saia do shell da VM, encerre sua execução e gere a box com os próximos comandos. Isso gerará o arquivo `package.box`:
 
 [source,bash]
 ----
-./target/jboss-eap-6.4/bin/standalone.sh -b 0.0.0.0 &
+logout
+vagrant halt
+vagrant package
+----
+
+=== Utilizando a box gerada
+
+Adicione a box gerada a lista de boxes conhecidas pelo Vagrant:
+
+[source,bash]
+----
+vagrant box add --name tutorial-jboss-brms package.box
+----
+
+Verifique se a box foi realmente adicionada através da saída do seguinte comando:
+
+[source,bash]
+----
+vagrant box list
+----
+
+Edite o arquivo `Vagrantfile`. Substitua o nome da box, de `boxcutter/fedora21` para `tutorial-jboss-brms`. Em seguida, inicie a VM. Isso pode ser feito com os seguintes comandos:
+
+[source,bash]
+----
+sed -i 's,boxcutter/fedora21,tutorial-jboss-brms,g' Vagrantfile
+vagrant up
 ----
 

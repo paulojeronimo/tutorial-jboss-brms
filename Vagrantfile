@@ -8,7 +8,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Desabilita a atualização automática do VirtualBox Guest Additions
   # feita pelo plugin vbguest - https://github.com/dotless-de/vagrant-vbguest
-  #config.vbguest.auto_update = false
+  config.vbguest.auto_update = false
 
   # Exporta portas utilizadas pelo WildFly
   config.vm.network :forwarded_port, guest: 8080, host: 8080
@@ -22,6 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Local comum para os diretórios compartilhados entre os ambientes
   config.vm.synced_folder "../tutorial-jboss-brms.backup", "/backup", create: true
 
+  # Executa o shell de provisionamento
   #config.vm.provision "shell" do |s|
   #  s.path = "instalar"
   #  s.privileged = false

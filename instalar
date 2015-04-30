@@ -42,7 +42,12 @@ ${GITHUB_DOTFILES##*/}/install
 git config --global user.name '$GITHUB_NAME'
 git config --global user.email $GITHUB_EMAIL
 
-sudo shutdown -r now
+unzip /backup/master.zip
+cd ~/brms-coolstore-demo-master/
+cp /backup/jboss-*.jar installs/
+./init.sh
+
+sudo shutdown -h now
 EOF
 
 # vim: set ts=4 sw=4 expandtab:

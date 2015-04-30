@@ -1,0 +1,12 @@
+#!/bin/bash
+
+BIN_DIR=~/brms-coolstore-demo-master/target/jboss-eap-6.4/bin
+
+cd
+
+case $1 in
+    start) nohup $BIN_DIR/standalone.sh -b 0.0.0.0 & ;;
+    stop) nohup $BIN_DIR/jboss-cli.sh -c :shutdown ;;
+    status) ps -ef | grep java ;;
+    log) tail -f nohup.out ;;
+esac

@@ -423,7 +423,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_procedimentos">Procedimentos</a>
 <ul class="sectlevel2">
 <li><a href="#_instalando_a_vm">Instalando a VM</a></li>
-<li><a href="#_parando_e_reiniciando_o_servidor_da_aplicação">Parando e reiniciando o servidor da aplicação</a></li>
+<li><a href="#_parando_e_reiniciando_a_aplicação">Parando e reiniciando a aplicação</a></li>
+<li><a href="#_acessando_a_aplicação">Acessando a aplicação</a></li>
+<li><a href="#_gerando_uma_box">Gerando uma box</a></li>
+<li><a href="#_utilizando_a_box_gerada">Utilizando a box gerada</a></li>
 </ul>
 </li>
 </ul>
@@ -434,7 +437,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_resumo">Resumo</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Este tutorial guia a montagem de uma máquina virtual (VM) (com o Fedora 21) executada no <a href="http://virtualbox.org">VirtualBox</a> e gerenciada pelo <a href="http://vagrantup.com">Vagrant</a> para demonstrar a execução do exemplo <a href="https://github.com/jbossdemocentral/brms-coolstore-demo">brms-coolstore-demo</a>, de autoria de <a href="http://www.schabell.org/">Eric Schabell</a>.</p>
+<p>Este tutorial guia a montagem de uma <code>virtual machine</code> (VM) (com o Fedora 21) executada no <a href="http://virtualbox.org">VirtualBox</a> e gerenciada pelo <a href="http://vagrantup.com">Vagrant</a> para demonstrar a execução do exemplo <a href="https://github.com/jbossdemocentral/brms-coolstore-demo">brms-coolstore-demo</a>, de autoria de <a href="http://www.schabell.org/">Eric Schabell</a>.</p>
 </div>
 </div>
 </div>
@@ -444,7 +447,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_instalando_a_vm">Instalando a VM</h3>
 <div class="paragraph">
-<p>Clone esse projeto do GitHub utilizando o Git:</p>
+<p>Clone este projeto do GitHub utilizando o Git:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -452,7 +455,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>Vá para o diretório tutorial-jboss-brms. Em seguida, copie o arquivo <code>config.exemplo</code> nomeando-o <code>config</code>. Esse arquivo contém a localização de repositórios utilizados por esse projeto e que podem ser configurados, caso você esteja utilizando forks em tua própria conta no <a href="http://github.com">GitHub</a>. Estes são os comandos:</p>
+<p>Vá para o diretório tutorial-jboss-brms. Em seguida, copie o arquivo <code>config.exemplo</code> nomeando-o <code>config</code>. Esse arquivo contém a localização de repositórios utilizados por este projeto e que podem ser configurados, caso você esteja utilizando forks em tua própria conta no <a href="http://github.com">GitHub</a>. Em resumo, execute os seguintes comandos:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -461,7 +464,7 @@ cp config.exemplo config</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Se você ainda não tem o Vagrant instalado, instale-o. Em seguida, instale também o plugin vagrant-vbguest utilizando o seguinte comando:</p>
+<p>Se você ainda não tem VirtualBox e o Vagrant instalados, instale-os (nessa ordem). Em seguida, instale também o plugin vagrant-vbguest utilizando o seguinte comando:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -469,83 +472,137 @@ cp config.exemplo config</code></pre>
 </div>
 </div>
 <div class="paragraph">
+<p>Crie o diretório <code>tutorial-jboss-brms.backup</code> um nível acima do diretório deste tutorial:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">mkdir ../tutorial-jboss-brms.backup</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Baixe os instaladores do <a href="http://www.jboss.org/download-manager/file/jboss-eap-6.4.0.GA-installer.jar">JBoss EAP 6.4</a> e do <a href="http://www.jboss.org/download-manager/file/jboss-brms-6.1.0.GA-installer.jar">JBoss BRMS 6.0.1</a>. Mova-os para o diretório <code>../tutorial-jboss-brms.backup</code> Baixe também o <a href="https://github.com/jbossdemocentral/brms-coolstore-demo/archive/master.zip">zip da aplicação brms-coolstore-demo</a> e mova-a para esse diretório.</p>
+</div>
+<div class="paragraph">
 <p>Inicie e provisione a máquina virtual com os comandos a seguir:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">vagrant up
-vagrant ssh -c /vagrant/instalar
+vagrant ssh -c /vagrant/instalar</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>O script <a href="./instalar">instalar</a> executará todos os passos de instalação da VM, do JBoss BRMS e da aplicação até o ponto de torná-la disponível para execução. Esse será um procedimento bastante demorado. Você pode sair para tomar um café enquanto o provisionamento ocorre ;).</p>
+</div>
+<div class="paragraph">
+<p>Terminado o provisionamento, o script <code>instalar</code> desligará a máquina automaticamente. Reinicie-a e faça a atualização do <code>VirtualBox Guest Additions</code> através dos seguintes comandos:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">vagrant up
 vagrant vbguest --do install
 vagrant reload</code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_parando_e_reiniciando_a_aplicação">Parando e reiniciando a aplicação</h3>
 <div class="paragraph">
-<p>Crie o diretório <code>tutorial-jboss-brms.backups</code> um nível acima do diretório desse tutorial:</p>
+<p>Se a VM estiver parada inicie-a e, em seguida, abra um shell via ssh com os seguintes comandos:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">mkdir ../tutorial-jboss-brms.backups</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">vagrant up
+vagrant ssh</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Baixe os instaladores do <a href="http://www.jboss.org/download-manager/file/jboss-eap-6.4.0.GA-installer.jar">JBoss EAP 6.4</a> e do <a href="http://www.jboss.org/download-manager/file/jboss-brms-6.1.0.GA-installer.jar">JBoss BRMS 6.0.1</a>. Mova-os para o diretório <code>../tutorial-jboss-brms.backups</code></p>
-</div>
-<div class="paragraph">
-<p>Baixe também o <a href="https://github.com/jbossdemocentral/brms-coolstore-demo/archive/master.zip">zip da aplicação brms-coolstore-demo</a> e mova-a para esse diretório.</p>
-</div>
-<div class="paragraph">
-<p>Execute os comandos a seguir para instalar o JBoss, o BRMS e a aplicação:</p>
+<p>Para executar o JBoss e ter a aplicação disponível para acesso, comande:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">vagrant ssh
-unzip /backup/master.zip
-cd ~/brms-coolstore-demo-master/
-cp /backup/jboss-*.jar installs/
-./init.sh
-./target/jboss-eap-6.4/bin/standalone.sh -b 0.0.0.0 &amp;</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">/vagrant/brms start</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>A URL <a href="http://localhost:8080/business-central" class="bare">http://localhost:8080/business-central</a> pode ser acessada através do usuário <code>erics</code> e da senha <code>jbossbrms1!</code>.</p>
+<p>Você pode ter acesso ao log de execução do JBoss através do seguinte comando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">/vagrant/brms log &amp;</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>A aplicação pode ser acessada através da URL <a href="http://localhost:8080/brms-coolstore-demo" class="bare">http://localhost:8080/brms-coolstore-demo</a>.</p>
+<p>Se desejar encerrar a execução do JBoss (e da aplicação), execute:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">/vagrant/brms stop</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Você pode ter a informação sobre se o JBoss está sendo executado, a qualquer momento, com o seguinte comando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">/vagrant/brms status</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_parando_e_reiniciando_o_servidor_da_aplicação">Parando e reiniciando o servidor da aplicação</h3>
+<h3 id="_acessando_a_aplicação">Acessando a aplicação</h3>
 <div class="paragraph">
-<p>Se a VM estiver parada, inicie-a:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">vagrant up</code></pre>
+<p>Com o JBoss em execução, a aplicação pode ser acessada através da URL <a href="http://localhost:8080/brms-coolstore-demo" class="bare">http://localhost:8080/brms-coolstore-demo</a>. Além disso, a URL <a href="http://localhost:8080/business-central" class="bare">http://localhost:8080/business-central</a> pode ser acessada através do usuário <code>erics</code> e da senha <code>jbossbrms1!</code>.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_gerando_uma_box">Gerando uma box</h3>
 <div class="paragraph">
-<p>Abra um shell na VM e vá diretório <code>brms-coolstore-demo-master</code>:</p>
+<p>Acesse a VM, salve e limpe o cache de pacotes (para diminuir o tamanho da box que será gerada):</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">vagrant ssh
-cd ~/brms-coolstore-demo-master/</code></pre>
+/vagrant/salvar
+sudo yum -y clean all</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Para parar o JBoss, execute:</p>
+<p>Saia do shell da VM, encerre sua execução e gere a box com os próximos comandos. Isso gerará o arquivo <code>package.box</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">./target/jboss-eap-6.4/bin/jboss-cli.sh -c :shutdown</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">logout
+vagrant halt
+vagrant package</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_utilizando_a_box_gerada">Utilizando a box gerada</h3>
+<div class="paragraph">
+<p>Adicione a box gerada a lista de boxes conhecidas pelo Vagrant:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">vagrant box add --name tutorial-jboss-brms package.box</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Para reiniciar o servidor novamente, execute:</p>
+<p>Verifique se a box foi realmente adicionada através da saída do seguinte comando:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">./target/jboss-eap-6.4/bin/standalone.sh -b 0.0.0.0 &amp;</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">vagrant box list</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edite o arquivo <code>Vagrantfile</code>. Substitua o nome da box, de <code>boxcutter/fedora21</code> para <code>tutorial-jboss-brms</code>. Em seguida, inicie a VM. Isso pode ser feito com os seguintes comandos:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">sed -i 's,boxcutter/fedora21,tutorial-jboss-brms,g' Vagrantfile
+vagrant up</code></pre>
 </div>
 </div>
 </div>
@@ -554,7 +611,7 @@ cd ~/brms-coolstore-demo-master/</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-04-24 10:18:18 BRT
+Last updated 2015-04-30 11:33:57 BRT
 </div>
 </div>
 </body>

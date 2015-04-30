@@ -10,8 +10,6 @@ AMBIENTE_USER=${AMBIENTE_USER:-vagrant}
 #   são os diretórios que ficarão no HOST (e não na BOX):
 AMBIENTE_USER_DIRS=(
 .m2
-.forge
-projetos
 )
 
 # nome do arquivo de backup utilizado pelo Vagrant
